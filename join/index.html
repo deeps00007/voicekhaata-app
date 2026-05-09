@@ -20,7 +20,7 @@
     }
     .logo { font-size: 48px; margin-bottom: 20px; }
     h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
-    p  { color: #888; font-size: 15px; margin-bottom: 32px; }
+    p  { color: #888; font-size: 15px; margin-bottom: 24px; line-height: 1.5; }
     .btn {
       display: inline-block;
       background: #00FFC6;
@@ -31,47 +31,49 @@
       border-radius: 16px;
       text-decoration: none;
       margin-bottom: 16px;
+      transition: transform 0.15s;
     }
-    .sub { color: #555; font-size: 13px; }
+    .btn:active { transform: scale(0.95); }
+    .sub { color: #555; font-size: 13px; margin-top: 8px; }
+    .group-id { color: #00FFC6; font-weight: 700; word-break: break-all; }
   </style>
-  <script>
-    // Grab the groupId from the query string and redirect into the app
-    (function () {
-      var params = new URLSearchParams(window.location.search);
-      var groupId = params.get('groupId');
-      if (groupId) {
-        // Try to open the app
-        window.location.href = 'voicekhaata://join?groupId=' + encodeURIComponent(groupId);
-        // Fallback after 2s — show the manual button
-        setTimeout(function () {
-          document.getElementById('manual').style.display = 'block';
-        }, 2000);
-      } else {
-        document.getElementById('no-id').style.display = 'block';
-      }
-    })();
-  </script>
 </head>
 <body>
   <div class="logo">💸</div>
-  <h1>Opening VoiceKhaata…</h1>
-  <p>You've been invited to a group.<br/>The app should open automatically.</p>
+  <h1>Join VoiceKhaata Group</h1>
+  <p>You've been invited to a group.<br/>Tap the button below to open the app.</p>
 
-  <!-- Shown after 2s if app didn't open -->
-  <div id="manual" style="display:none;">
-    <script>
-      // Re-insert the button with correct link
-      document.write(
-        '<a class="btn" href="voicekhaata://join?groupId=' +
-        new URLSearchParams(window.location.search).get('groupId') +
-        '">Open in VoiceKhaata</a><br/>'
-      );
-    </script>
-    <p class="sub">If the button doesn't work, make sure VoiceKhaata is installed.</p>
+  <div id="open-section">
+    <!-- This link uses Chrome's intent:// format which ACTUALLY works on Android -->
+    <a id="open-btn" class="btn" href="#">Open in VoiceKhaata</a>
+    <p class="sub">Make sure VoiceKhaata is installed on your phone.</p>
   </div>
 
   <div id="no-id" style="display:none;">
-    <p>This link looks invalid. Ask your friend to reshare the invite.</p>
+    <p>⚠️ This link looks invalid.<br/>Ask your friend to reshare the invite.</p>
   </div>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var groupId = params.get('groupId');
+
+      if (!groupId) {
+        document.getElementById('open-section').style.display = 'none';
+        document.getElementById('no-id').style.display = 'block';
+        return;
+      }
+
+      // Build the Android Intent URL — this is the ONLY format Chrome respects.
+      // Format: intent://HOST/PATH?params#Intent;scheme=SCHEME;package=PKG;end
+      var intentUrl = 'intent://join?groupId=' + encodeURIComponent(groupId)
+        + '#Intent'
+        + ';scheme=voicekhaata'
+        + ';package=com.voicekhaata.app'
+        + ';end';
+
+      document.getElementById('open-btn').href = intentUrl;
+    })();
+  </script>
 </body>
 </html>

@@ -1,0 +1,14 @@
+[
+    {
+      "relation": [
+        "delegate_permission/common.handle_all_urls"
+      ],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.voicekhaata.app",
+        "sha256_cert_fingerprints": [
+          "c6:10:23:82:6c:41:7a:a5:06:26:2b:27:39:40:02:b5:d6:13:30:37:33:c2:73:a2:38:1a:63:6c:e6:87:a5:30"
+        ]
+      }
+    }
+  ]
